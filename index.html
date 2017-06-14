@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ReportGenerator-Alice & Bob</title>
+  <link href="css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <script src="https://unpkg.com/vue"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+</head>
+<body>
+<div id="app" class="row">
+	  	<div class="col s12">
+	  	  <nav>
+	  	  <div class="nav-wrapper">
+	  	  <a href="#!" class="brand-logo right">Alice & Bob</a>
+		  <ul class="pagination">
+		    <li v-bind:class="{ active: currentTab=='general' }"><a href="#!" v-on:click="{currentTab='general'; level=0}">Réunion</a></li>
+		    <li v-bind:class="{ active: currentTab=='ordres' }"><a href="#!" v-on:click="{currentTab='ordres'; level=25}">Ordre du jour</a></li>
+		    <li v-bind:class="{ active: currentTab=='participants' }"><a href="#!" v-on:click="{currentTab='participants'; level=50}">Participants</a></li>
+		    <li v-bind:class="{ active: currentTab=='resume' }"><a href="#!" v-on:click="{currentTab='resume'; level=75}">Résumé de la séance</a></li>
+		    <li v-bind:class="{ active: currentTab=='incidents' }"><a href="#!" v-on:click="{currentTab='incidents'; level=100}">Incidents</a></li>
+		  </ul>
+		  </div>
+		  </nav>
+  		  <div class="progress">
+      		<div class="determinate" v-bind:style="{width: level +'%'}"></div>
+  		  </div>        
+		  <div v-if="currentTab=='general'">
+		  	<div class="row">
+			  	<div class="col s5">	
+			  		<label for="type" >Type de réunion</label>
+		    		<input placeholder="Réunion du Conseil" id="type" type="text" class="validate" v-model="typeR">
+		    	</div>
+		  		<div class="col s5">
+		  			<label for="dateReunion" >Date de tenue de la réunion</label>
+		  			<input placeholder="25 Décembre 2016" id="dateR" type="datetime-local" class="validate" v-model="dateR">
+		  		</div>
+		    </div>
+		  	<div class="row">
+		  		<div class="col s5">
+		  			<label for="heureDebut" >Heure de début de la réunion</label>
+		  			<input placeholder="19:00" id="heureDebut" type="text" class="validate" v-model="heureR">
+		  		</div>
+			  	<div class="col s5">
+		  			<label for="heureFin" >Heure de cloture de la réunion</label>
+		  			<input placeholder="20:00" id="heureFin" type="text" class="validate" v-model="heureF">
+		  		</div>
+		  	</div>
+		  	<div class="row">
+			  	<div class="col s5">	
+			  		<label for="type" >Date de la prochaine réunion</label>
+		    		<input placeholder="18 Janvier 2017" id="type" type="datetime-local" class="validate">
+		    	</div>
+		    </div>
+		  </div>
+		  <div v-if="currentTab=='ordres'">
+		  	<div class="row">
+			  	<div class="col s5">	
+			  		<label for="order" >Ordre du jour</label>
+		    		<input placeholder="Item supplémentaire" id="order" type="text" class="validate" v-model="currentOrder" v-on:keyup.enter="addOrder">
+		    	</div>
+		    	<div class="col s5">
+		    		<ul>
+			    		<li class="chip" v-for="order in orders"> {{ order.title }} <i class="close material-icons" v-on:click="delOrder(order)">close</i> </li>
+		    		</ul>
+		    	</div>
+		    </div>
+		  </div>
+		  <div v-if="currentTab=='participants'">
+		  	<div class="row">
+			  	<div class="col s5">	
+			  		<label for="type" >Participants</label>
+		    		<input placeholder="Prénom Nom, fonction." id="type" type="text" class="validate" v-model="currentAttendant" v-on:keyup.enter="addAttendant">
+		    	</div>
+		    	<div class="col s5">
+		    		<ul>
+		    			<li class="chip" v-for="attendant in attendants"> {{ attendant }} <i class="close material-icons" v-on:click="delAttendant(attendant)">close</i> </li>
+		    		</ul>
+		    	</div>
+		    </div>
+		  </div>
+		  <div v-if="currentTab=='resume'">
+		  	<div class="row">
+			  	<div class="col s10" v-for="order in orders">
+			  		<label for="type" >{{order.title}}</label>
+		    		<input placeholder="Résumé" id="type" type="text" class="validate" v-model="order.resume">
+		    	</div>
+		    </div>
+		  </div>
+		  <div v-if="currentTab=='incidents'">
+		  	<div class="row">
+			  	<div class="col s10">	
+			  		<label for="type" >Incidents</label>
+		    		<input value="Aucun incident à déplorer." id="type" type="text" class="validate">
+		    	</div>
+		    </div>
+		  </div>
+	  	  <button class="btn waves-effect waves-light" type="submit" name="genTex" v-on:click="generateTex">
+	  	  	Générer Tex<i class="material-icons right">send</i>
+	  	  </button>
+	  	   <button class="disabled btn waves-effect waves-light" type="submit" name="genPdf"  v-on:click="generateTex">
+	  	  	Générer Pdf<i class="material-icons right">send</i>
+	  	  </button>
+	  </div>
+  <div id="tex" style="display: none">
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[french]{babel}%langue = français
+\usepackage[utf8]{inputenc}%encodage = utf8
+\usepackage[T1]{fontenc}%accents reconnus
+\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}%marges
+\usepackage{graphicx}%inclure des images
+\usepackage{eurosym}
+
+\newcommand\typeR{ {{typeR}} }
+\newcommand\dateR{ {{dateR}} }
+\newcommand\heureR{ {{heureR}} }
+\newcommand\heureF{ {{heureF}} }
+
+\begin{document}
+
+\includegraphics[width=.97\textwidth]{banCR.png}
+
+\begin{center}
+\vspace{1.5cm}
+\textsc{Compte-rendu}\\
+\textbf{\typeR{} - \dateR}
+\end{center}
+
+\section*{Tenue de la réunion}
+
+La réunion commence à \heureR{}. Elle est présidée par  et le présent document est rédigé par .
+
+\section*{Ordre du jour}
+
+\begin{itemize}
+	{{listOrders}}
+\end{itemize}
+
+\section*{Participants}
+
+\begin{itemize}
+	{{listAttendants}}
+\end{itemize}
+
+\section*{Résumé de la séance}
+
+	{{printResume}}
+
+\section*{Incidents}
+
+	{{ incidents ? incidents : "Aucun incident à déplorer." }}
+
+\section*{Clôture de la réunion}
+
+. La réunion est close à \heureF{}.
+
+\vfill
+\begin{center}
+Fait à Nantes, le \dateR{}.\\
+\vspace{2cm}
+\end{center}
+
+\end{document}
+  </div>
+
+  </div>
+  <script src="js/app.js"></script>
+  <script src="js/filesaver.js"></script>
+  <footer>Gracieusement créé par Antoine Carat, président fondateur d'Alice & Bob. 4ever in our <3</footer>
+
+</body>
+</html>
