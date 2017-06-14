@@ -58,7 +58,7 @@
                     <div class="row">
                         <div class="col s5">
                             <label for="type" >Date de la prochaine réunion</label>
-                            <input placeholder="18 Janvier 2017" id="type" type="datetime-local" class="validate" v-model="dateNext">
+                            <input placeholder="18 Janvier 2017" id="dateNext" type="datetime-local" class="validate" v-model="dateNext">
                         </div>
                     </div>
                 </div>
@@ -79,7 +79,7 @@
                     <div class="row">
                         <div class="col s5">
                             <label for="type" >Participants (Au moins deux)</label>
-                            <input placeholder="Prénom Nom, fonction." id="type" type="text" class="validate" v-model="currentAttendant" v-on:keyup.enter="addAttendant">
+                            <input placeholder="Prénom Nom, fonction." id="attendee" type="text" class="validate" v-model="currentAttendant" v-on:keyup.enter="addAttendant">
                         </div>
                         <div class="col s5">
                             <ul>
@@ -92,7 +92,7 @@
                     <div class="row">
                         <div class="col s10" v-for="order in orders">
                             <label for="type" >{{order.title}}</label>
-                            <input placeholder="Résumé" id="type" type="text" class="validate" v-model="order.resume">
+                            <input placeholder="Résumé" id="resume" type="text" class="validate" v-model="order.resume">
                         </div>
                     </div>
                 </div>
@@ -100,7 +100,7 @@
                     <div class="row">
                         <div class="col s10">
                             <label for="type" >Incidents</label>
-                            <input value="Aucun incident à déplorer." id="type" type="text" class="validate">
+                            <input id="incidents" type="text" class="validate" v-model="incidents">
                         </div>
                     </div>
                 </div>
@@ -124,8 +124,66 @@
         <div id="tex" style="display: none">
 \documentclass{article}
 
+\usepackage[french]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+
+\newcommand\typeR{ {{typeR}} }
+\newcommand\dateR{ {{dateR}} }
+\newcommand\heureR{ {{heureR}} }
+\newcommand\heureF{ {{heureF}} }
+
 \begin{document}
-Truc
+
+\begin{center}
+\Huge{}
+\textbf{Alice et Bob}\\
+\Large{}
+\textit{Association soumise à la loi du $1^{er}$ juillet 1901}\\
+\textit{et au décret du 16 août 1901}\\
+\end{center}
+
+\begin{center}
+\vspace{1.5cm}
+\textsc{Compte-rendu}\\
+\textbf{\typeR{} - \dateR}
+\end{center}
+
+\section*{Tenue de la réunion}
+
+La réunion commence à \heureR{}. Elle est présidée par {{attendants[0]}} et le présent document est rédigé par {{attendants[1]}}.
+
+\section*{Ordre du jour}
+
+\begin{itemize}
+	{{listOrders}}
+\end{itemize}
+
+\section*{Participants}
+
+\begin{itemize}
+	{{listAttendants}}
+\end{itemize}
+
+\section*{Résumé de la séance}
+
+{{printResume}}
+
+\section*{Incidents}
+
+{{ incidents ? incidents : "Aucun incident à déplorer." }}
+
+\section*{Clôture de la réunion}
+
+{{ dateNext ? "Prochaine réunion le " + dateNext : "Pas de date pour une prochaine réunion" }}. La réunion est close à \heureF{}.
+
+\vfill
+\begin{center}
+Fait à Nantes, le \dateR{}.\\
+\vspace{2cm}
+\end{center}
+
 \end{document}
         </div>
 
@@ -137,7 +195,7 @@ Truc
 \usepackage[T1]{fontenc}%accents reconnus
 \usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}%marges
 %\usepackage{graphicx}%inclure des images
-\usepackage{eurosym}
+%\usepackage{eurosym}
 
 \newcommand\typeR{ {{typeR}} }
 \newcommand\dateR{ {{dateR}} }
@@ -161,13 +219,13 @@ La réunion commence à \heureR{}. Elle est présidée par {{attendants[0]}} et 
 \section*{Ordre du jour}
 
 \begin{itemize}
-{{listOrders}}
+	{{listOrders}}
 \end{itemize}
 
 \section*{Participants}
 
 \begin{itemize}
-{{listAttendants}}
+	{{listAttendants}}
 \end{itemize}
 
 \section*{Résumé de la séance}
@@ -180,7 +238,7 @@ La réunion commence à \heureR{}. Elle est présidée par {{attendants[0]}} et 
 
 \section*{Clôture de la réunion}
 
-{{ dateNext ? "Prochaine réunion le " + dateNext : "Pas de date pour une prochaine réunion." }}. La réunion est close à \heureF{}.
+{{ dateNext ? "Prochaine réunion le " + dateNext : "Pas de date pour une prochaine réunion" }}. La réunion est close à \heureF{}.
 
 \vfill
 \begin{center}

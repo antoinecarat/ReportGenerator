@@ -5,15 +5,15 @@ var app = new Vue({
         currentOrder: "",
         currentAttendant: "",
         level: 0,
-        typeR: "",
-        dateR: "",
-        heureR: "",
-        heureF: "",
-        dateNext: "",
-        orders: [],
-        attendants: [],
+        typeR: "Réunion du Conseil",
+        dateR: "7 Septembre 2017",
+        heureR: "18:30",
+        heureF: "20:00",
+        dateNext: "8 Octobre 2017",
+        orders: [{title: "Futur", resume:"jgizbegb."}],
+        attendants: ["carat, président", "thibaud, secretaire"],
         fileName: "",
-        incidents: ""
+        incidents: "Aucun incident à déplorer.",
     },
     computed: {
         listOrders: function() {
@@ -34,7 +34,7 @@ var app = new Vue({
             var print = '';
             for (var i = 0; i < this.orders.length; i++) {
                 var order = this.orders[i];
-                print += '\n\subsection*{'+order.title+'}';
+                print += '\n\\subsection*{'+order.title+'}';
                 print += '\n\n'+order.resume+'\n';
             }
             return print;
@@ -76,7 +76,7 @@ var app = new Vue({
             saveAs(file, name +'.tex');
         },
         generatePdf: function() {
-            //if (!this.check()) return;
+            if (!this.check()) return;
             var name = this.fileName ? this.fileName : "compte-rendu-reunion";
             window.open("https://latexonline.cc/compile?download=" + name +".pdf&text="+$('#tex').text());
         }
