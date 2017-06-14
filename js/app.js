@@ -11,6 +11,7 @@ var app = new Vue({
     heureF: "",
     orders: [],
     attendants: [],
+    fileName: "",
   },
   computed: {
     listOrders: function() {
@@ -57,10 +58,11 @@ var app = new Vue({
     },
     generateTex: function() {
       var file = new Blob([$('#tex').text()], {type: 'text/plain'});
-      saveAs(file, "Reunion.tex");
+      var name = this.fileName ? this.fileName : "compte-rendu-reunion";
+      saveAs(file, name +'.tex');
     },
     generatePdf: function() {
       
     }
   }
-})
+});
