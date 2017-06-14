@@ -25,9 +25,10 @@
                         <ul class="pagination">
                             <li v-bind:class="{ active: currentTab=='general' }"><a href="#!" v-on:click="currentTab='general'; level=0;">Réunion</a></li>
                             <li v-bind:class="{ active: currentTab=='ordres' }"><a href="#!" v-on:click="currentTab='ordres'; level=25;">Ordre du jour</a></li>
-                            <li v-bind:class="{ active: currentTab=='participants' }"><a href="#!" v-on:click="currentTab='participants'; level=50;">Participants</a></li>
-                            <li v-bind:class="{ active: currentTab=='resume' }"><a href="#!" v-on:click="currentTab='resume'; level=75;">Résumé de la séance</a></li>
-                            <li v-bind:class="{ active: currentTab=='incidents' }"><a href="#!" v-on:click="currentTab='incidents'; level=100;">Incidents</a></li>
+                            <li v-bind:class="{ active: currentTab=='participants' }"><a href="#!" v-on:click="currentTab='participants'; level=35;">Participants</a></li>
+                            <li v-bind:class="{ active: currentTab=='resume' }"><a href="#!" v-on:click="currentTab='resume'; level=50;">Résumé de la séance</a></li>
+                            <li v-bind:class="{ active: currentTab=='incidents' }"><a href="#!" v-on:click="currentTab='incidents'; level=90;">Incidents</a></li>
+                            <li v-bind:class="{ active: currentTab=='cloture' }"><a href="#!" v-on:click="currentTab='cloture'; level=100;">Cloture de la réunion</a></li>
                         </ul>
                     </div>
                 </nav>
@@ -49,16 +50,6 @@
                         <div class="col s5">
                             <label for="heureDebut" >Heure de début de la réunion</label>
                             <input placeholder="19:00" id="heureDebut" type="text" class="validate" v-model="heureR">
-                        </div>
-                        <div class="col s5">
-                            <label for="heureFin" >Heure de cloture de la réunion</label>
-                            <input placeholder="20:00" id="heureFin" type="text" class="validate" v-model="heureF">
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col s5">
-                            <label for="type" >Date de la prochaine réunion</label>
-                            <input placeholder="18 Janvier 2017" id="dateNext" type="datetime-local" class="validate" v-model="dateNext">
                         </div>
                     </div>
                 </div>
@@ -92,7 +83,7 @@
                     <div class="row">
                         <div class="col s10" v-for="order in orders">
                             <label for="type" >{{order.title}}</label>
-                            <input placeholder="Résumé" id="resume" type="text" class="validate" v-model="order.resume">
+                            <textarea placeholder="Résumé" id="resume" type="text" class="validate materialize-textarea" v-model="order.resume"></textarea>
                         </div>
                     </div>
                 </div>
@@ -100,7 +91,23 @@
                     <div class="row">
                         <div class="col s10">
                             <label for="type" >Incidents</label>
-                            <input id="incidents" type="text" class="validate" v-model="incidents">
+                			<textarea rows="1" id="incidents" class="materialize-textarea validate" v-model="incidents"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div v-if="currentTab=='cloture'">
+                	<div class="row">
+                		<label for="notes">Notes</label>
+                		<textarea id="notes" class="materialize-textarea" v-model="notes"></textarea>
+                	</div>
+                	<div class="row">
+                        <div class="col s5">
+                            <label for="heureFin" >Heure de cloture de la réunion</label>
+                            <input placeholder="20:00" id="heureFin" type="text" class="validate" v-model="heureF">
+                        </div>
+                        <div class="col s5">
+                            <label for="type" >Date de la prochaine réunion</label>
+                            <input placeholder="18 Janvier 2017" id="dateNext" type="datetime-local" class="validate" v-model="dateNext">
                         </div>
                     </div>
                 </div>
@@ -122,7 +129,7 @@
         </div>
 
         <div id="tex" style="display: none">
-\documentclass{article}
+\documentclass[9pt]{article}
 
 \usepackage[french]{babel}
 \usepackage[utf8]{inputenc}
@@ -172,11 +179,13 @@ La réunion commence à \heureR{}. Elle est présidée par {{attendants[0]}} et 
 
 \section*{Incidents}
 
-{{ incidents ? incidents : "Aucun incident à déplorer." }}
+{{ incidents ? incidents : "Aucun incident à déplorer." }}\\
 
 \section*{Clôture de la réunion}
 
-{{ dateNext ? "Prochaine réunion le " + dateNext : "Pas de date pour une prochaine réunion" }}. La réunion est close à \heureF{}.
+La réunion est close à \heureF{}.\\
+{{notes}}\\
+{{ dateNext ? "Prochaine réunion le " + dateNext : "Pas de date pour une prochaine réunion" }}.\\
 
 \vfill
 \begin{center}
