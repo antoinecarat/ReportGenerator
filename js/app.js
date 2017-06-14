@@ -9,6 +9,7 @@ var app = new Vue({
     dateR: "",
     heureR: "",
     heureF: "",
+    dateNext: "",
     orders: [],
     attendants: [],
     fileName: "",
@@ -56,13 +57,27 @@ var app = new Vue({
     delAttendant: function (attendant) {
       this.attendants.splice(this.attendants.indexOf(attendant),1);
     },
+    check: function() {
+      if (this.attendants.length < 2) {
+        alert('Il faut au moins 2 participants');
+        return false;
+      }
+      if (this.orders.length < 1) {
+        alert('Il faut au moins un ordre du jour.');
+        return false;
+      }
+      return true;
+    },
     generateTex: function() {
+      if (!this.check()) return;
       var file = new Blob([$('#tex').text()], {type: 'text/plain'});
       var name = this.fileName ? this.fileName : "compte-rendu-reunion";
       saveAs(file, name +'.tex');
     },
     generatePdf: function() {
-      
+      if (!this.check()) return;
+      var name = this.fileName ? this.fileName : "compte-rendu-reunion";
+      window.open("https://latexonline.cc/compile?download=" + name +".pdf&text="+$('#tex').text());
     }
   }
 });
